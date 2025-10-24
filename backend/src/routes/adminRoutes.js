@@ -7,22 +7,22 @@ import {
 
 const router = express.Router();
 
-// 🧩 Productos
+//Productos
 router.get('/products', listarProductos);
 router.post('/products', crearProducto);
-router.put('/products/:id', actualizarProducto); // ✅ añadido
+router.put('/products/:id', actualizarProducto); 
 router.delete('/products/:id', eliminarProducto);
 
-// 🧩 Categorías
+//Categorías
 router.get('/categories', listarCategorias);
 router.post('/categories', crearCategoria);
-router.put('/categories/:id', actualizarCategoria); // ✅ añadido
+router.put('/categories/:id', actualizarCategoria); 
 router.delete('/categories/:id', eliminarCategoria);
 
-// 🧩 Proveedores
+//Proveedores
 router.get('/suppliers', listarProveedores);
 router.post('/suppliers', crearProveedor);
-router.put('/suppliers/:id', actualizarProveedor); // ✅ añadido
+router.put('/suppliers/:id', actualizarProveedor);
 router.delete('/suppliers/:id', eliminarProveedor);
 
 export default router;

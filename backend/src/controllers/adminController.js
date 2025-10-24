@@ -4,7 +4,7 @@ import { Categoria } from '../models/Categoria.js';
 import { Proveedor } from '../models/Proveedor.js';
 
 // Productos
-// ✅ LISTAR PRODUCTOS (con nombre de categoría y proveedor)
+//LISTAR PRODUCTOS (con nombre de categoría y proveedor)
 export const listarProductos = async (req, res) => {
   try {
     const productos = await Producto.findAll({

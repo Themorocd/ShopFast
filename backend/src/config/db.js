@@ -14,7 +14,7 @@ export const sequelize = new Sequelize(
   }
 );
 
-// 🔍 Probar conexión
+//Probar conexión
 (async () => {
   try {
     await sequelize.authenticate();

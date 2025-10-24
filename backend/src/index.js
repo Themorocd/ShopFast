@@ -6,7 +6,7 @@ import productoRoutes from './routes/productoRoutes.js';
 import categoriaRoutes from './routes/categoriaRoutes.js';
 import proveedorRoutes from './routes/proveedorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // ✅ Importación correcta
+import userRoutes from './routes/userRoutes.js'; 
 
 dotenv.config();
 const app = express();
@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 👇 Aquí se monta el prefijo de las rutas
+//Aquí se monta el prefijo de las rutas
 app.use('/api/users', userRoutes);
 app.use('/api/products', productoRoutes);
 app.use('/api/categories', categoriaRoutes);

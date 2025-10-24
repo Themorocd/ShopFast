@@ -4,7 +4,7 @@ import { register, verifyEmail, login } from '../controllers/userController.js';
 const router = express.Router();
 
 router.post('/register', register);
-router.post('/login', login); // 👈 Nueva ruta
+router.post('/login', login);
 router.get('/verify/:token', verifyEmail);
 
 import { verifyToken } from '../middleware/authMiddleware.js';

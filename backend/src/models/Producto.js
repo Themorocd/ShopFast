@@ -29,6 +29,6 @@ export const Producto = sequelize.define('Producto', {
   timestamps: false,
 });
 
-// 🔗 Relaciones
+//Relaciones
 Producto.belongsTo(Categoria, { foreignKey: 'id_categoria', as: 'categoria' });
 Producto.belongsTo(Proveedor, { foreignKey: 'id_proveedor', as: 'proveedor' });

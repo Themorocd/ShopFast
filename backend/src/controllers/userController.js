@@ -5,7 +5,7 @@ import { User } from '../models/User.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// 📩 Configurar transporte de correos
+//Configurar envio de correos
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// 🧾 REGISTRO DE USUARIO
+//REGISTRO DE USUARIO
 export const register = async (req, res) => {
   try {
     const { nombre, email, password } = req.body;
@@ -57,11 +57,11 @@ export const register = async (req, res) => {
 
       console.log(`📧 Correo de verificación enviado a ${email}`);
     } catch (mailError) {
-      // No detenemos el registro si el correo falla
+      // No se detiene el registro si el correo falla
       console.warn(`⚠️ Error enviando correo a ${email}:`, mailError.message);
     }
 
-    // Respuesta al frontend (éxito incluso si el correo falló)
+    // Respuesta al frontend (éxito incluso si el correo falla)
     res.status(200).json({
       msg: 'Usuario registrado correctamente. Revisa tu correo para confirmar tu cuenta.'
     });
@@ -72,7 +72,7 @@ export const register = async (req, res) => {
   }
 };
 
-// ✅ VERIFICAR USUARIO
+//VERIFICAR USUARIO
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.params;
@@ -94,7 +94,7 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// 🧾 LOGIN DE USUARIO
+// LOGIN DE USUARIO
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;

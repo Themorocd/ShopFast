@@ -1,6 +1,6 @@
 import { Producto } from '../models/Producto.js';
 
-// 📦 Crear un nuevo producto
+//Crear un nuevo producto
 export const crearProducto = async (req, res) => {
   try {
     const producto = await Producto.create(req.body);
@@ -10,7 +10,7 @@ export const crearProducto = async (req, res) => {
   }
 };
 
-// 📋 Listar todos los productos
+// Listar todos los productos
 export const listarProductos = async (req, res) => {
   try {
     const productos = await Producto.findAll();
@@ -20,7 +20,7 @@ export const listarProductos = async (req, res) => {
   }
 };
 
-// ✏️ Actualizar producto
+//Actualizar producto
 export const actualizarProducto = async (req, res) => {
   try {
     const { id } = req.params;
@@ -35,7 +35,7 @@ export const actualizarProducto = async (req, res) => {
   }
 };
 
-// 🗑️ Eliminar producto
+//Eliminar producto
 export const eliminarProducto = async (req, res) => {
   try {
     const { id } = req.params;
