@@ -7,6 +7,8 @@ import categoriaRoutes from './routes/categoriaRoutes.js';
 import proveedorRoutes from './routes/proveedorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js'; 
+import orderRoutes from './routes/orderRoutes.js';
+
 
 dotenv.config();
 const app = express();
@@ -20,6 +22,7 @@ app.use('/api/products', productoRoutes);
 app.use('/api/categories', categoriaRoutes);
 app.use('/api/providers', proveedorRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/orders', orderRoutes);
 
 
 app.get('/', (req, res) => res.send('Servidor funcionando 🚀'));
