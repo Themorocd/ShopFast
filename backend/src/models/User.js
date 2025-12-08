@@ -27,7 +27,17 @@ export const User = sequelize.define('User', {
   verificado: {
   type: DataTypes.BOOLEAN,
   defaultValue: false
-}
+},
+  telefono: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },                        
+  direccion: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
 }, {
   tableName: 'usuarios',
   timestamps: false

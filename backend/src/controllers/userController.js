@@ -133,4 +133,54 @@ export const login = async (req, res) => {
     console.error('❌ Error al iniciar sesión:', error.message);
     res.status(500).json({ msg: 'Error al iniciar sesión', error: error.message });
   }
+
 };
+
+// 👉 Obtener perfil del usuario logueado
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user.id || req.user.id_usuario;   // por si el token tiene id_usuario
+
+    const userDb = await User.findByPk(userId, {
+      attributes: ['id_usuario', 'nombre', 'email', 'telefono', 'direccion']
+    });
+
+    if (!userDb) {
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
+
+    res.json(userDb);
+  } catch (error) {
+    console.error('Error obteniendo perfil:', error);
+    res.status(500).json({ msg: 'Error obteniendo perfil' });
+  }
+};
+
+// 👉 Actualizar perfil del usuario logueado
+export const updateProfile = async (req, res) => {
+  const { nombre, telefono, direccion } = req.body;
+
+  try {
+    const userId = req.user.id || req.user.id_usuario;   // 👈 clave
+
+    console.log('updateProfile -> req.user =', req.user);
+    console.log('updateProfile -> userId =', userId);
+
+    const [updated] = await User.update(
+      { nombre, telefono, direccion },
+      {
+        where: { id_usuario: userId }    // 👈 usa SIEMPRE id_usuario (como en la SELECT)
+      }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
+
+    res.json({ msg: 'Perfil actualizado correctamente' });
+  } catch (error) {
+    console.error('Error actualizando perfil:', error);
+    res.status(500).json({ msg: 'Error actualizando perfil' });
+  }
+};
+

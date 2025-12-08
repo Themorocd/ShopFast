@@ -1,11 +1,17 @@
-// Carrito 1:N CarritoItem
-Carrito.hasMany(CarritoItem, { foreignKey: 'id_carrito' });
-CarritoItem.belongsTo(Carrito, { foreignKey: 'id_carrito' });
-
-// Pedido 1:N DetallePedido
-Pedido.hasMany(DetallePedido, { foreignKey: 'id_pedido' });
-DetallePedido.belongsTo(Pedido, { foreignKey: 'id_pedido' });
+import { Pedido } from './Pedido.js';
+import { DetallePedido } from './DetallePedido.js';
+import { Pago } from './Pago.js';
+import { Producto } from './Producto.js';
+// importa también User, Carrito, etc., si los usas
 
 // Pedido 1:1 Pago
-Pedido.hasOne(Pago, { foreignKey: 'id_pedido' });
-Pago.belongsTo(Pedido, { foreignKey: 'id_pedido' });
+Pedido.hasOne(Pago, { foreignKey: 'id_pedido', as: 'Pago' });
+Pago.belongsTo(Pedido, { foreignKey: 'id_pedido', as: 'Pedido' });
+
+// Pedido 1:N DetallePedido
+Pedido.hasMany(DetallePedido, { foreignKey: 'id_pedido', as: 'DetallePedidos' });
+DetallePedido.belongsTo(Pedido, { foreignKey: 'id_pedido', as: 'Pedido' });
+
+// Producto 1:N DetallePedido
+Producto.hasMany(DetallePedido, { foreignKey: 'id_producto', as: 'DetallesProducto' });
+DetallePedido.belongsTo(Producto, { foreignKey: 'id_producto', as: 'Producto' });

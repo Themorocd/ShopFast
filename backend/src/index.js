@@ -8,6 +8,7 @@ import proveedorRoutes from './routes/proveedorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import userRoutes from './routes/userRoutes.js'; 
 import orderRoutes from './routes/orderRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 
 dotenv.config();
@@ -23,6 +24,8 @@ app.use('/api/categories', categoriaRoutes);
 app.use('/api/providers', proveedorRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/users', userRoutes);
 
 
 app.get('/', (req, res) => res.send('Servidor funcionando 🚀'));

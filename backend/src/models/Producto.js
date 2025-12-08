@@ -22,7 +22,8 @@ export const Producto = sequelize.define('Producto', {
   },
   stock: {
     type: DataTypes.INTEGER,
-    defaultValue: 0,
+    allowNull: false,
+    defaultValue: 0
   },
 }, {
   tableName: 'productos',
