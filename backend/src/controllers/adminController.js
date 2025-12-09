@@ -33,13 +33,14 @@ export const crearProducto = async (req, res) => {
 export const actualizarProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, precio, id_categoria, id_proveedor } = req.body;
+    const { nombre, precio, stock, id_categoria, id_proveedor } = req.body;
 
     const producto = await Producto.findByPk(id);
     if (!producto) return res.status(404).json({ msg: 'Producto no encontrado' });
 
     producto.nombre = nombre;
     producto.precio = precio;
+    producto.stock = stock;
     producto.id_categoria = id_categoria;
     producto.id_proveedor = id_proveedor;
     await producto.save();
