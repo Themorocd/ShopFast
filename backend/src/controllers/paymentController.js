@@ -1,6 +1,21 @@
 // src/controllers/paymentController.js
+import nodemailer from 'nodemailer';
 import { createPayPalOrder, capturePayPalOrder } from '../services/paypalService.js';
-import { crearPedidoYRegistroPago } from './orderController.js'; // si la exportas
+import { crearPedidoYRegistroPago } from './orderController.js';
+
+// ⚠️ Quitamos este import porque no lo usamos aquí
+// import { sendOrderConfirmationEmail } from '../util/mailer.js';
+
+import { User } from '../models/User.js';
+
+// Configurar envío de correos con Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS, // contraseña de aplicación
+  },
+});
 
 // 1) Crear orden PayPal (frontal no toca PayPal directo)
 export const crearOrdenPayPal = async (req, res) => {
@@ -20,12 +35,14 @@ export const crearOrdenPayPal = async (req, res) => {
     // Crear orden en PayPal (SANDBOX)
     const order = await createPayPalOrder(total);
 
-    // Puedes guardar temporalmente info si quieres, pero de momento solo devolvemos el orderId
     res.json({
-      orderId: order.id
+      orderId: order.id,
     });
   } catch (error) {
-    console.error('Error creando orden PayPal:', error.response?.data || error.message);
+    console.error(
+      'Error creando orden PayPal:',
+      error.response?.data || error.message
+    );
     res.status(500).json({ msg: 'Error creando orden PayPal' });
   }
 };
@@ -40,14 +57,14 @@ export const capturarPagoPayPal = async (req, res) => {
       return res.status(400).json({ msg: 'Falta orderId' });
     }
     if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ msg: 'Carrito vacío o datos incorrectos' });
+      return res
+        .status(400)
+        .json({ msg: 'Carrito vacío o datos incorrectos' });
     }
 
     // Llamar a PayPal para capturar el pago (SANDBOX)
     const captureData = await capturePayPalOrder(orderId);
 
-    // Normalmente hay algo así:
-    // captureData.purchase_units[0].payments.captures[0].id
     const captureId =
       captureData?.purchase_units?.[0]?.payments?.captures?.[0]?.id || null;
 
@@ -60,12 +77,115 @@ export const capturarPagoPayPal = async (req, res) => {
       captureId || `PAYPAL-${orderId}`
     );
 
+    // 🆕 Calcular total del pedido
+    const total = items.reduce(
+      (acc, it) => acc + Number(it.precio) * it.quantity,
+      0
+    );
+
+    // 🆕 Intentar enviar correo de confirmación de pedido
+    try {
+      const usuario = await User.findByPk(userId);
+
+      if (usuario) {
+        const fecha = new Date().toLocaleString('es-ES');
+        const transaccionId = captureId || `PAYPAL-${orderId}`;
+
+        // 🆕 Filas de la tabla (producto / cantidad / precio / subtotal)
+        const rowsHtml = items
+          .map(
+            (item) => `
+              <tr>
+                <td style="padding:8px 12px; border-bottom:1px solid #eee;">
+                  ${item.nombre}
+                </td>
+                <td style="padding:8px 12px; border-bottom:1px solid #eee; text-align:center;">
+                  ${item.quantity}
+                </td>
+                <td style="padding:8px 12px; border-bottom:1px solid #eee; text-align:right;">
+                  ${Number(item.precio).toFixed(2)} €
+                </td>
+                <td style="padding:8px 12px; border-bottom:1px solid #eee; text-align:right;">
+                  ${(item.quantity * Number(item.precio)).toFixed(2)} €
+                </td>
+              </tr>
+            `
+          )
+          .join('');
+
+        await transporter.sendMail({
+          from: `"ShopFast" <${process.env.EMAIL_USER}>`,
+          to: usuario.email, // ✅ usamos el email del usuario
+          subject: 'Confirmación de pedido - ShopFast',
+          html: `
+          <div style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+            <div style="max-width:600px; margin:0 auto; background:white; border-radius:8px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+              
+              <h2 style="color:#198754; margin-top:0; text-align:center;">
+                🛒 ShopFast
+              </h2>
+
+              <p>Hola <strong>${usuario.nombre}</strong>,</p>
+              <p>
+                ¡Gracias por tu compra en <strong>ShopFast</strong>!  
+                Te confirmamos que tu pedido ha sido <strong>ENVIADO</strong>.
+              </p>
+
+              <p style="font-size:14px; color:#555;">
+                <strong>Fecha:</strong> ${fecha}<br/>
+                <strong>ID de transacción:</strong> ${transaccionId}
+              </p>
+
+              <h3 style="margin-top:24px;">Resumen de tu pedido</h3>
+              <table style="width:100%; border-collapse:collapse; margin-top:8px;">
+                <thead>
+                  <tr>
+                    <th style="text-align:left; padding:8px 12px; border-bottom:2px solid #198754;">Producto</th>
+                    <th style="text-align:center; padding:8px 12px; border-bottom:2px solid #198754;">Cantidad</th>
+                    <th style="text-align:right; padding:8px 12px; border-bottom:2px solid #198754;">Precio</th>
+                    <th style="text-align:right; padding:8px 12px; border-bottom:2px solid #198754;">Subtotal</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  ${rowsHtml}
+                </tbody>
+              </table>
+
+              <p style="text-align:right; margin-top:16px; font-size:16px;">
+                <strong>Total: ${total.toFixed(2)} €</strong>
+              </p>
+
+              <p style="font-size:13px; color:#555; margin-top:24px;">
+                Estado del pedido: <strong style="color:#198754;">Enviado</strong><br/>
+                Recibirás otro correo cuando esté preparado para su entrega.
+              </p>
+            </div>
+          </div>
+          `,
+        });
+
+        console.log(
+          '✅ Email de confirmación de pedido enviado a:',
+          usuario.email
+        );
+      }
+    } catch (mailError) {
+      console.error(
+        '❌ Error enviando email de confirmación de pedido:',
+        mailError
+      );
+      // No rompemos la respuesta al cliente si falla el email
+    }
+
     res.status(201).json({
-      msg: 'Pago PayPal capturado y pedido creado',
-      ...resultado
+      msg: 'Pago PayPal capturado, pedido creado y correo de confirmación enviado (si ha sido posible).',
+      ...resultado,
     });
   } catch (error) {
-    console.error('Error capturando pago PayPal:', error.response?.data || error.message);
+    console.error(
+      'Error capturando pago PayPal:',
+      error.response?.data || error.message
+    );
     res.status(500).json({ msg: 'Error capturando pago PayPal' });
   }
 };

@@ -46,13 +46,52 @@ export const register = async (req, res) => {
         from: `"ShopFast" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Verifica tu cuenta en ShopFast',
-        html: `
-          <h2>¡Hola ${nombre}!</h2>
-          <p>Gracias por registrarte en <b>ShopFast</b>. Para activar tu cuenta, haz clic en el siguiente enlace:</p>
-          <a href="${verificationLink}" target="_blank">Verificar mi cuenta</a>
-          <br><br>
-          <p>Este enlace expirará en 24 horas.</p>
-        `
+        html:  `
+      <div style="font-family: Arial, sans-serif; background-color:#f5f5f5; padding:20px;">
+        <div style="max-width:600px; margin:0 auto; background:white; border-radius:8px; padding:24px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          
+          <h2 style="color:#198754; margin-top:0; text-align:center;">
+            🛒 ShopFast
+          </h2>
+
+          <p>Hola <strong>${nombre}</strong>,</p>
+
+          <p>
+            Gracias por registrarte en <strong>ShopFast</strong>. Antes de poder usar tu cuenta,
+            necesitamos que confirmes tu dirección de correo electrónico.
+          </p>
+
+          <div style="text-align:center; margin:24px 0;">
+            <a href="${verificationLink}"
+               style="
+                 display:inline-block;
+                 padding:12px 24px;
+                 background-color:#198754;
+                 color:#ffffff;
+                 text-decoration:none;
+                 border-radius:6px;
+                 font-weight:bold;
+               ">
+              Verificar mi cuenta
+            </a>
+          </div>
+
+          <p style="font-size:14px; color:#555;">
+            Si el botón no funciona, copia y pega el siguiente enlace en tu navegador:
+          </p>
+
+          <p style="font-size:13px; color:#007bff; word-break:break-all;">
+            <a href="${verificationLink}">${verificationLink}</a>
+          </p>
+
+          <hr style="border:none; border-top:1px solid #eee; margin:24px 0;" />
+
+          <p style="font-size:12px; color:#999; text-align:center;">
+            Si tú no has creado esta cuenta, puedes ignorar este mensaje.
+          </p>
+        </div>
+      </div>
+    `
       });
 
       console.log(`📧 Correo de verificación enviado a ${email}`);
@@ -85,8 +124,10 @@ export const verifyEmail = async (req, res) => {
     await user.save();
 
     res.send(`
+       <div class="container text-center my-5">
       <h2>✅ Tu cuenta ha sido verificada correctamente.</h2>
       <p>Ya puedes iniciar sesión en <a href="http://localhost:4200/login">ShopFast</a>.</p>
+    </div>
     `);
   } catch (error) {
     console.error('❌ Error al verificar cuenta:', error.message);
@@ -153,6 +194,35 @@ export const getProfile = async (req, res) => {
   } catch (error) {
     console.error('Error obteniendo perfil:', error);
     res.status(500).json({ msg: 'Error obteniendo perfil' });
+  }
+};
+// 🔥 Actualizar IMAGEN de perfil
+export const actualizarImagenPerfil = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!req.file) {
+      return res.status(400).json({ msg: 'No se ha enviado ninguna imagen' });
+    }
+
+    // ruta que guardamos en BD (igual que con productos)
+    const rutaImagen = `/uploads/${req.file.filename}`;
+
+    const usuario = await User.findByPk(userId);
+    if (!usuario) {
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
+
+    usuario.imagen = rutaImagen;
+    await usuario.save();
+
+    res.json({
+      msg: 'Imagen de perfil actualizada correctamente',
+      imagen: rutaImagen,
+    });
+  } catch (error) {
+    console.error('❌ Error actualizarImagenPerfil:', error);
+    res.status(500).json({ msg: 'Error al actualizar imagen de perfil', error: error.message });
   }
 };
 

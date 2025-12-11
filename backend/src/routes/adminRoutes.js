@@ -1,4 +1,5 @@
 import express from 'express';
+import upload from '../middleware/upload.js'
 import {
   listarProductos, crearProducto, actualizarProducto, eliminarProducto,
   listarCategorias, crearCategoria, actualizarCategoria, eliminarCategoria,
@@ -9,8 +10,8 @@ const router = express.Router();
 
 //Productos
 router.get('/products', listarProductos);
-router.post('/products', crearProducto);
-router.put('/products/:id', actualizarProducto); 
+router.post('/products',  upload.single('imagen'), crearProducto);
+router.put('/products/:id',  upload.single('imagen') ,actualizarProducto); 
 router.delete('/products/:id', eliminarProducto);
 
 //Categorías

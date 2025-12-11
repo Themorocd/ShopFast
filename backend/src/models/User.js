@@ -30,14 +30,18 @@ export const User = sequelize.define('User', {
 },
   telefono: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true
   },                        
   direccion: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true
   },
+  imagen: {
+  type: DataTypes.STRING,
+  allowNull: true,
+},
 }, {
   tableName: 'usuarios',
   timestamps: false
