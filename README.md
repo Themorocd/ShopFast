@@ -121,3 +121,10 @@ La aplicación estará disponible en:
 **Andrés José Marín Pascualvaca**  
 Proyecto final del ciclo **Desarrollo de Aplicaciones Web (DAW)**  
 IES Mar de Cádiz — 2025
+
+
+paypal; sb-yh4fp48097551@personal.example.com
+pass: E5U$g55_
+https://developer.paypal.com/dashboard/accounts/edit/4822241966657708620?accountName=sb-yh4fp48097551@personal.example.com
+usuario: paypalproyecto@gmail.com
+pass: ya sabes, la corta
