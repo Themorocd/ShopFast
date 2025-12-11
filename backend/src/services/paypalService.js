@@ -7,7 +7,7 @@ const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID_SANDBOX;
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET_SANDBOX;
 const PAYPAL_API_BASE = process.env.PAYPAL_API_BASE || 'https://api-m.sandbox.paypal.com';
 
-// 👀 LOG de comprobación al arrancar el servidor
+// LOG de comprobación al arrancar el servidor
 console.log('PAYPAL_CLIENT_ID_SANDBOX:', PAYPAL_CLIENT_ID ? PAYPAL_CLIENT_ID.slice(0, 10) + '...' : 'NO DEFINIDO');
 console.log('PAYPAL_SECRET_SANDBOX definido:', !!PAYPAL_SECRET);
 console.log('PAYPAL_API_BASE:', PAYPAL_API_BASE);
